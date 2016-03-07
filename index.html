@@ -31,22 +31,37 @@ withdrawedColor="#97CA30"
 
 nRows=10;
 nColumns=9;
+nBalls=90;
 
 
 
 function start() {
     myGameArea.start();
 
-    allBalls = new setBalls(90);
+    allBalls = new setBalls(nBalls);
 
-
-    //lastDrowed(14);
-    //previous1(20);
-    //previous2(33);
-    console.log(allBalls);
+    //console.log(allBalls);
     allBalls.drawAll();
 }
 
+function shuffle(array) {
+  var currentIndex = array.length, temporaryValue, randomIndex;
+
+  // While there remain elements to shuffle...
+  while (0 !== currentIndex) {
+
+    // Pick a remaining element...
+    randomIndex = Math.floor(Math.random() * currentIndex);
+    currentIndex -= 1;
+
+    // And swap it with the current element.
+    temporaryValue = array[currentIndex];
+    array[currentIndex] = array[randomIndex];
+    array[randomIndex] = temporaryValue;
+  }
+
+  return array;
+}
 
 
 function setBalls(number) {
@@ -109,7 +124,7 @@ function setBalls(number) {
         new ball(
             2*(nRows)*(ballRadius+ballSpacing) + 3.5*ballRadius,
             1/3*nColumns*(ballRadius+ballSpacing), 
-            2*ballRadius,
+            1.5*ballRadius,
             idleColor, 
             ballTextWithdrawed,
             number
@@ -134,6 +149,7 @@ function setBalls(number) {
         )
     }
 
+    this.shuffledListOfBalls = shuffle(this.listOfBalls.slice());
 }
 
 function ballObject(number, x, y) {
@@ -177,6 +193,13 @@ function ball(x,y, radius, color, textFont, text) {
 
 }
 
+function withdrawRandom(){
+	//rand=Math.floor((Math.random() * nBalls) + 1);
+	//allBalls.selectBall(rand);
+	withdrawBall = allBalls.shuffledListOfBalls.pop()
+	allBalls.selectBall(withdrawBall.number);
+}
+
 function clearInputText(){
     document.getElementById('inputBox').value="";
 }
@@ -212,5 +235,6 @@ function parseInput(){
 <br>
 Bola número: <input id="inputBox" onkeydown="if(event.keyCode == 13){document.getElementById('clickButton').click()}" type="text" placeholder='Bola Número'></input>
 <button id="clickButton" onclick="parseInput()" >Saiu!</button>
+<button id="suffleButton" onclick="withdrawRandom()">RANDOM! (or just ENTER key) </button>
 </body>
 </html>
