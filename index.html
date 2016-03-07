@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<meta charset="UTF-8"/>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+<script type="text/javascript">
+    window.onbeforeunload = function() {
+        return "==================================\n==================================\n Sair da página apaga TUDO.\nDe certeza?\n==================================\n==================================\n"
+    }
+</script>
+<style>
+canvas {
+    border:1px solid #d3d3d3;
+    background-color: #f1f1f1;
+}
+</style>
+</head>
+<body onload="start()">
+<script>
+
+canvasWidth=640-40;
+canvasHeight=480-40;
+ballRadius=19.5;
+ballSpacing=2;
+ballTextIdle='18pt Calibri';
+ballTextWithdrawed='bold 20pt Calibri';
+withdrawedText='bold 70pt Calibri';
+idleColor="#DDDDDD";
+withdrawedColor="#97CA30"
+
+nRows=10;
+nColumns=9;
+
+
+
+function start() {
+    myGameArea.start();
+
+    allBalls = new setBalls(90);
+
+
+    //lastDrowed(14);
+    //previous1(20);
+    //previous2(33);
+    console.log(allBalls);
+    allBalls.drawAll();
+}
+
+
+
+function setBalls(number) {
+    this.drawAll = function(){
+        this.drawAllBalls();
+        this.drawLastWithdraw1(this.lastDrowed[this.lastDrowed.length-1]);
+        this.drawLastWithdraw2(this.lastDrowed[this.lastDrowed.length-2]);
+        this.drawLastWithdraw3(this.lastDrowed[this.lastDrowed.length-3]);
+    };
+
+    this.drawAllBalls = function(){
+        lb = this.listOfBalls;
+
+        for (i=1; i <= this.listOfBalls.length; i++){
+            if (lb[i-1].isWithdrawed){
+                color=withdrawedColor;
+                textFont=ballTextWithdrawed;
+            } else{
+                color=idleColor;
+                textFont=ballTextIdle;
+            }
+
+
+            new ball(
+                2*(ballRadius+ballSpacing)*lb[i-1].x + ballRadius+ballSpacing, 
+                2*(ballRadius+ballSpacing)*lb[i-1].y + ballRadius+ballSpacing,
+                ballRadius,
+                color,
+                textFont,
+                lb[i-1].number
+            );
+        }
+    };
+
+    this.drawLastWithdraw1 = function(number){
+        if (number==undefined) {number=""};
+        new ball(
+            2*(nRows)*(ballRadius+ballSpacing) + 3.5*ballRadius,
+            5/3*nColumns*(ballRadius+ballSpacing), 
+            4*ballRadius,
+            withdrawedColor, 
+            withdrawedText,
+            number
+        );
+    };
+
+    this.drawLastWithdraw2 = function(number){
+        if (number==undefined) {number=""};
+        new ball(
+            2*(nRows)*(ballRadius+ballSpacing) + 3.5*ballRadius,
+            3/3*nColumns*(ballRadius-ballSpacing), 
+            2*ballRadius,
+            idleColor, 
+            ballTextWithdrawed,
+            number
+        );
+    };
+    this.drawLastWithdraw3 = function(number){
+        if (number==undefined) {number=""};
+        new ball(
+            2*(nRows)*(ballRadius+ballSpacing) + 3.5*ballRadius,
+            1/3*nColumns*(ballRadius+ballSpacing), 
+            2*ballRadius,
+            idleColor, 
+            ballTextWithdrawed,
+            number
+        );
+    };
+
+    this.selectBall = function (number){
+        this.listOfBalls[number-1].isWithdrawed=true;
+        this.lastDrowed[this.lastDrowed.length]=number;
+        this.drawAll();
+    }
+
+
+
+    this.listOfBalls = [];
+    this.lastDrowed = [];
+
+    for (i=1;i<=number;i++){
+        this.listOfBalls[i-1]=new ballObject(i
+            , Math.floor( (i-1) / (nColumns+1) )
+            , (i-1) % nRows
+        )
+    }
+
+}
+
+function ballObject(number, x, y) {
+    this.number = number;
+    this.x = x;
+    this.y = y;
+    this.isWithdrawed = false;
+}
+
+
+
+var myGameArea = {
+    canvas : document.createElement("canvas"),
+    start : function() {
+        this.canvas.width = canvasWidth;
+        this.canvas.height = canvasHeight;
+        this.context = this.canvas.getContext("2d");
+        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+    }
+}
+
+function ball(x,y, radius, color, textFont, text) {
+	//console.log(x,y, radius, color);
+    this.x = x;
+    this.y = y; 
+    this.radius = radius;
+    ctx = myGameArea.context;
+    ctx.beginPath();
+    ctx.fillStyle = color;
+    //if (text%7==0){ctx.fillStyle='#97CA30';}
+    //ctx.fillRect(this.x, this.y, this.width, this.height);
+    ctx.arc(x, y, radius, 0, 2*Math.PI);
+	ctx.fill();
+	ctx.stroke();
+
+    ctx.font = textFont;
+    //if (text%7==0){ctx.font='bold '+textFont;}
+    ctx.fillStyle = 'black';
+    ctx.textAlign = 'center';
+    ctx.fillText(text, x, y+radius/2);
+
+}
+
+function clearInputText(){
+    document.getElementById('inputBox').value="";
+}
+
+function parseInput(){
+
+    text=document.getElementById('inputBox').value;
+    console.log("aqui:"+text);
+
+    if ( "" == text.trim() ) {
+        clearInputText(); 
+        return ;
+    }
+    if ( isNaN(text.trim()) ) {
+        clearInputText(); 
+        return ;
+    }
+    
+    //else
+    allBalls.selectBall(text.trim());
+    clearInputText();
+
+    
+}
+
+</script>
+<br>
+Bola número: <input id="inputBox" onkeydown="if(event.keyCode == 13){document.getElementById('clickButton').click()}" type="text" placeholder='User name'></input>
+<button id="clickButton" onclick="parseInput()" >Saiu!</button>
+</body>
+</html>
