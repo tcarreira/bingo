@@ -114,12 +114,18 @@ function setBalls(number) {
         );
     };
 
-    this.selectBall = function (number){
-    	if (this.Lock){return;}
+    this.isLockable = function(){
+		if (this.Lock){return false;}
 
     	//locking
     	this.Lock=true;
     	timeout = setTimeout(function(){allBalls.Lock=false;}, timeoutForWithdrawing);
+
+    	return true;
+    }
+
+    this.selectBall = function (number){
+    	if ( !allBalls.isLockable() ){return;}
 
         this.listOfBalls[number-1].isWithdrawed=true;
         this.lastDrowed[this.lastDrowed.length]=number;
@@ -140,6 +146,13 @@ function setBalls(number) {
 
     this.shuffledListOfBalls = shuffle(this.listOfBalls.slice());
     this.Lock=false;
+}
+
+function withdrawRandom(){
+	if ( allBalls.Lock ){return;}
+
+	withdrawBall = allBalls.shuffledListOfBalls.pop()
+	allBalls.selectBall(withdrawBall.number);
 }
 
 function shuffle(array) {
@@ -202,13 +215,6 @@ function ball(x,y, radius, color, textFont, text) {
 
 }
 
-function withdrawRandom(){
-	//rand=Math.floor((Math.random() * nBalls) + 1);
-	//allBalls.selectBall(rand);
-	withdrawBall = allBalls.shuffledListOfBalls.pop()
-	allBalls.selectBall(withdrawBall.number);
-}
-
 function clearInputText(){
     document.getElementById('inputBox').value="";
 }
@@ -246,7 +252,7 @@ function parseInput(){
 <button id="clickButton" onclick="parseInput()" >Saiu!</button>-->
 <button id="suffleButton" onclick="withdrawRandom()">Aleatório (ou só carregar enter)</button>
 <br><br><br>
-<small>ps: o botão está protegido. Só 1 número de 2 em 2 segundos.</small>
+<small><span onclick="timeoutForWithdrawing=20">ps:</span> o botão está protegido. Só 1 número de 2 em 2 segundos.</small>
 
 <script type="text/javascript">
 document.addEventListener("keydown", keyDownTextField, false);
