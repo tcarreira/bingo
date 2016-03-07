@@ -16,7 +16,7 @@ canvas {
 }
 </style>
 </head>
-<body onload="start()">
+<body id="body_body" onload="start();">
 <script>
 
 canvasWidth=640-40;
@@ -33,6 +33,7 @@ nRows=10;
 nColumns=9;
 nBalls=90;
 
+gameMode='AUTO'; // AUTO , MANUAL , undef??
 
 
 function start() {
@@ -233,8 +234,18 @@ function parseInput(){
 
 </script>
 <br>
-Bola número: <input id="inputBox" onkeydown="if(event.keyCode == 13){document.getElementById('clickButton').click()}" type="text" placeholder='Bola Número'></input>
-<button id="clickButton" onclick="parseInput()" >Saiu!</button>
+<!--Bola número: <input id="inputBox" onkeydown="if(event.keyCode == 13){document.getElementById('clickButton').click()}" type="text" placeholder='Bola Número'></input>
+<button id="clickButton" onclick="parseInput()" >Saiu!</button>-->
 <button id="suffleButton" onclick="withdrawRandom()">RANDOM! (or just ENTER key) </button>
+
+<script type="text/javascript">
+document.addEventListener("keydown", keyDownTextField, false);
+
+function keyDownTextField(e) { 
+	if(e.keyCode==13) {
+		withdrawRandom();
+	}
+}
+</script>
 </body>
 </html>
