@@ -184,7 +184,7 @@ function clearInputText(){
 function parseInput(){
 
     text=document.getElementById('inputBox').value;
-    console.log("aqui:"+text);
+    console.log("Input: "+text);
 
     if ( "" == text.trim() ) {
         clearInputText(); 
@@ -196,8 +196,13 @@ function parseInput(){
     }
     
     //else
-    allBalls.selectBall(text.trim());
-    clearInputText();
+    try {
+        allBalls.selectBall(text.trim());    
+    }
+    catch (err) {
+        clearInputText();
+        console.error(err);
+    }
 
     
 }
