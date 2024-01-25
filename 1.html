@@ -149,22 +149,23 @@ function setBalls(number) {
 }
 
 function withdrawRandom(){
-	if ( allBalls.Lock ){return;}
+    if ( allBalls.Lock ){return;}
 
-  notThisTime = [];
-  while (allBalls.shuffledListOfBalls.lenght > 0){
-	  withdrawBall = allBalls.shuffledListOfBalls.pop();
-    if (withdrawBall in alwaysLast && allBalls.shuffledListOfBalls.lenght > 0) {
-      notThisTime.push(withdrawBall);
-    } else {
-      break;
+    notThisTime = [];
+    withdrawBall = allBalls.shuffledListOfBalls.pop();
+
+    // skip alwaysLast numbers, except when only them are missing
+    if (allBalls.shuffledListOfBalls.length >= alwaysLast.length) {
+        while (withdrawBall.number in alwaysLast) {
+            notThisTime.push(withdrawBall);
+            withdrawBall = allBalls.shuffledListOfBalls.pop();
+        }
     }
-  }
+    allBalls.shuffledListOfBalls.push(...notThisTime);
 
-  allBalls.shuffledListOfBalls.push(...notThisTime);
-	allBalls.selectBall(withdrawBall.number);
+    allBalls.selectBall(withdrawBall.number);
 }
-
+	
 function shuffle(array) {
   var currentIndex = array.length, temporaryValue, randomIndex;
 
