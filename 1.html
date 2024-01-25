@@ -154,14 +154,14 @@ function withdrawRandom(){
     notThisTime = [];
     withdrawBall = allBalls.shuffledListOfBalls.pop();
 
-    // skip alwaysLast numbers, except when only them are missing
+    // skip alwaysLast numbers, except when only them are
     if (allBalls.shuffledListOfBalls.length >= alwaysLast.length) {
-        while (withdrawBall.number in alwaysLast) {
+        while (alwaysLast.includes(withdrawBall.number)) {
             notThisTime.push(withdrawBall);
             withdrawBall = allBalls.shuffledListOfBalls.pop();
         }
     }
-    allBalls.shuffledListOfBalls.push(...notThisTime);
+    allBalls.shuffledListOfBalls.unshift(...notThisTime);
 
     allBalls.selectBall(withdrawBall.number);
 }
