@@ -1,267 +1,303 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<meta charset="UTF-8"/>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
-<script type="text/javascript">
-    window.onbeforeunload = function() {
-        return "==================================\n==================================\n Sair da página apaga TUDO.\nDe certeza?\n==================================\n==================================\n"
-    }
-</script>
-<style>
-canvas {
-    border:1px solid #d3d3d3;
-    background-color: #f1f1f1;
-}
-</style>
+    <meta name="viewport"
+        content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <meta charset="UTF-8" />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.0/jquery.min.js"></script>
+    <script type="text/javascript">
+        window.onbeforeunload = function () {
+            return "==================================\n==================================\n Sair da página apaga TUDO.\nDe certeza?\n==================================\n==================================\n"
+        }
+    </script>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            padding: 10px;
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        canvas {
+            border: 1px solid #d3d3d3;
+            background-color: #f1f1f1;
+            max-width: 100%;
+            height: auto;
+        }
+
+        button {
+            font-size: 16px;
+            padding: 10px 15px;
+            margin: 5px;
+            touch-action: manipulation;
+        }
+
+        @media screen and (max-width: 768px) {
+            body {
+                padding: 5px;
+            }
+
+            button {
+                width: 100%;
+                max-width: 300px;
+            }
+        }
+    </style>
 </head>
+
 <body id="body_body" onload="start();">
-<script>
+    <script>
 
-canvasWidth=640-40;
-canvasHeight=480-40;
-ballRadius=19.5;
-ballSpacing=2;
-ballTextIdle='18pt Calibri';
-ballTextWithdrawed='bold 20pt Calibri';
-withdrawedText='bold 70pt Calibri';
-idleColor="#DDDDDD";
-withdrawedColor="#97CA30"
+        canvasWidth = 640 - 40;
+        canvasHeight = 480 - 40;
+        ballRadius = 19.5;
+        ballSpacing = 2;
+        ballTextIdle = '18pt Calibri';
+        ballTextWithdrawed = 'bold 20pt Calibri';
+        withdrawedText = 'bold 70pt Calibri';
+        idleColor = "#DDDDDD";
+        withdrawedColor = "#97CA30"
 
-nRows=10;
-nColumns=9;
-nBalls=90;
+        nRows = 10;
+        nColumns = 9;
+        nBalls = 90;
 
-timeoutForWithdrawing=2000;
-gameMode='AUTO'; // AUTO , MANUAL , undef??
-
-
-function start() {
-    myGameArea.start();
-
-    allBalls = new setBalls(nBalls);
-
-    //console.log(allBalls);
-    allBalls.drawAll();
-}
+        timeoutForWithdrawing = 2000;
+        gameMode = 'AUTO'; // AUTO , MANUAL , undef??
 
 
-function setBalls(number) {
-    this.drawAll = function(){
-        this.drawAllBalls();
-        this.drawLastWithdraw1(this.lastDrowed[this.lastDrowed.length-1]);
-        this.drawLastWithdraw2(this.lastDrowed[this.lastDrowed.length-2]);
-        this.drawLastWithdraw3(this.lastDrowed[this.lastDrowed.length-3]);
-    };
+        function start() {
+            myGameArea.start();
 
-    this.drawAllBalls = function(){
-        lb = this.listOfBalls;
+            allBalls = new setBalls(nBalls);
 
-        for (i=1; i <= this.listOfBalls.length; i++){
-            if (lb[i-1].isWithdrawed){
-                color=withdrawedColor;
-                textFont=ballTextWithdrawed;
-            } else{
-                color=idleColor;
-                textFont=ballTextIdle;
+            //console.log(allBalls);
+            allBalls.drawAll();
+        }
+
+
+        function setBalls(number) {
+            this.drawAll = function () {
+                this.drawAllBalls();
+                this.drawLastWithdraw1(this.lastDrowed[this.lastDrowed.length - 1]);
+                this.drawLastWithdraw2(this.lastDrowed[this.lastDrowed.length - 2]);
+                this.drawLastWithdraw3(this.lastDrowed[this.lastDrowed.length - 3]);
+            };
+
+            this.drawAllBalls = function () {
+                lb = this.listOfBalls;
+
+                for (i = 1; i <= this.listOfBalls.length; i++) {
+                    if (lb[i - 1].isWithdrawed) {
+                        color = withdrawedColor;
+                        textFont = ballTextWithdrawed;
+                    } else {
+                        color = idleColor;
+                        textFont = ballTextIdle;
+                    }
+
+
+                    new ball(
+                        2 * (ballRadius + ballSpacing) * lb[i - 1].x + ballRadius + ballSpacing,
+                        2 * (ballRadius + ballSpacing) * lb[i - 1].y + ballRadius + ballSpacing,
+                        ballRadius,
+                        color,
+                        textFont,
+                        lb[i - 1].number
+                    );
+                }
+            };
+
+            this.drawLastWithdraw1 = function (number) {
+                if (number == undefined) { number = "" };
+                new ball(
+                    2 * (nRows) * (ballRadius + ballSpacing) + 3.5 * ballRadius,
+                    5 / 3 * nColumns * (ballRadius + ballSpacing),
+                    4 * ballRadius,
+                    withdrawedColor,
+                    withdrawedText,
+                    number
+                );
+            };
+
+            this.drawLastWithdraw2 = function (number) {
+                if (number == undefined) { number = "" };
+                new ball(
+                    2 * (nRows) * (ballRadius + ballSpacing) + 3.5 * ballRadius,
+                    3 / 3 * nColumns * (ballRadius - ballSpacing),
+                    2 * ballRadius,
+                    idleColor,
+                    ballTextWithdrawed,
+                    number
+                );
+            };
+            this.drawLastWithdraw3 = function (number) {
+                if (number == undefined) { number = "" };
+                new ball(
+                    2 * (nRows) * (ballRadius + ballSpacing) + 3.5 * ballRadius,
+                    1 / 3 * nColumns * (ballRadius + ballSpacing),
+                    1.5 * ballRadius,
+                    idleColor,
+                    ballTextWithdrawed,
+                    number
+                );
+            };
+
+            this.isLockable = function () {
+                if (this.Lock) { return false; }
+
+                //locking
+                this.Lock = true;
+                timeout = setTimeout(function () { allBalls.Lock = false; }, timeoutForWithdrawing);
+
+                return true;
+            }
+
+            this.selectBall = function (number) {
+                if (!allBalls.isLockable()) { return; }
+
+                this.listOfBalls[number - 1].isWithdrawed = true;
+                this.lastDrowed[this.lastDrowed.length] = number;
+                this.drawAll();
             }
 
 
-            new ball(
-                2*(ballRadius+ballSpacing)*lb[i-1].x + ballRadius+ballSpacing, 
-                2*(ballRadius+ballSpacing)*lb[i-1].y + ballRadius+ballSpacing,
-                ballRadius,
-                color,
-                textFont,
-                lb[i-1].number
-            );
+
+            this.listOfBalls = [];
+            this.lastDrowed = [];
+
+            for (i = 1; i <= number; i++) {
+                this.listOfBalls[i - 1] = new ballObject(i
+                    , Math.floor((i - 1) / (nColumns + 1))
+                    , (i - 1) % nRows
+                )
+            }
+
+            this.shuffledListOfBalls = shuffle(this.listOfBalls.slice());
+            this.Lock = false;
         }
-    };
 
-    this.drawLastWithdraw1 = function(number){
-        if (number==undefined) {number=""};
-        new ball(
-            2*(nRows)*(ballRadius+ballSpacing) + 3.5*ballRadius,
-            5/3*nColumns*(ballRadius+ballSpacing), 
-            4*ballRadius,
-            withdrawedColor, 
-            withdrawedText,
-            number
-        );
-    };
+        function withdrawRandom() {
+            if (allBalls.Lock) { return; }
 
-    this.drawLastWithdraw2 = function(number){
-        if (number==undefined) {number=""};
-        new ball(
-            2*(nRows)*(ballRadius+ballSpacing) + 3.5*ballRadius,
-            3/3*nColumns*(ballRadius-ballSpacing), 
-            2*ballRadius,
-            idleColor, 
-            ballTextWithdrawed,
-            number
-        );
-    };
-    this.drawLastWithdraw3 = function(number){
-        if (number==undefined) {number=""};
-        new ball(
-            2*(nRows)*(ballRadius+ballSpacing) + 3.5*ballRadius,
-            1/3*nColumns*(ballRadius+ballSpacing), 
-            1.5*ballRadius,
-            idleColor, 
-            ballTextWithdrawed,
-            number
-        );
-    };
+            withdrawBall = allBalls.shuffledListOfBalls.pop()
+            allBalls.selectBall(withdrawBall.number);
+        }
 
-    this.isLockable = function(){
-		if (this.Lock){return false;}
+        function shuffle(array) {
+            var currentIndex = array.length, temporaryValue, randomIndex;
 
-    	//locking
-    	this.Lock=true;
-    	timeout = setTimeout(function(){allBalls.Lock=false;}, timeoutForWithdrawing);
+            // While there remain elements to shuffle...
+            while (0 !== currentIndex) {
 
-    	return true;
-    }
+                // Pick a remaining element...
+                randomIndex = Math.floor(Math.random() * currentIndex);
+                currentIndex -= 1;
 
-    this.selectBall = function (number){
-    	if ( !allBalls.isLockable() ){return;}
+                // And swap it with the current element.
+                temporaryValue = array[currentIndex];
+                array[currentIndex] = array[randomIndex];
+                array[randomIndex] = temporaryValue;
+            }
 
-        this.listOfBalls[number-1].isWithdrawed=true;
-        this.lastDrowed[this.lastDrowed.length]=number;
-        this.drawAll();
-    }
+            return array;
+        }
+
+        function ballObject(number, x, y) {
+            this.number = number;
+            this.x = x;
+            this.y = y;
+            this.isWithdrawed = false;
+        }
 
 
 
-    this.listOfBalls = [];
-    this.lastDrowed = [];
+        var myGameArea = {
+            canvas: document.createElement("canvas"),
+            start: function () {
+                this.canvas.width = canvasWidth;
+                this.canvas.height = canvasHeight;
+                this.context = this.canvas.getContext("2d");
+                document.body.insertBefore(this.canvas, document.body.childNodes[0]);
+            }
+        }
 
-    for (i=1;i<=number;i++){
-        this.listOfBalls[i-1]=new ballObject(i
-            , Math.floor( (i-1) / (nColumns+1) )
-            , (i-1) % nRows
-        )
-    }
+        function ball(x, y, radius, color, textFont, text) {
+            //console.log(x,y, radius, color);
+            this.x = x;
+            this.y = y;
+            this.radius = radius;
+            ctx = myGameArea.context;
+            ctx.beginPath();
+            ctx.fillStyle = color;
+            //if (text%7==0){ctx.fillStyle='#97CA30';}
+            //ctx.fillRect(this.x, this.y, this.width, this.height);
+            ctx.arc(x, y, radius, 0, 2 * Math.PI);
+            ctx.fill();
+            ctx.stroke();
 
-    this.shuffledListOfBalls = shuffle(this.listOfBalls.slice());
-    this.Lock=false;
-}
+            ctx.font = textFont;
+            //if (text%7==0){ctx.font='bold '+textFont;}
+            ctx.fillStyle = 'black';
+            ctx.textAlign = 'center';
+            ctx.fillText(text, x, y + radius / 2);
 
-function withdrawRandom(){
-	if ( allBalls.Lock ){return;}
+        }
 
-	withdrawBall = allBalls.shuffledListOfBalls.pop()
-	allBalls.selectBall(withdrawBall.number);
-}
+        function clearInputText() {
+            document.getElementById('inputBox').value = "";
+        }
 
-function shuffle(array) {
-  var currentIndex = array.length, temporaryValue, randomIndex;
+        function parseInput() {
 
-  // While there remain elements to shuffle...
-  while (0 !== currentIndex) {
+            text = document.getElementById('inputBox').value;
+            console.log("Input: " + text);
 
-    // Pick a remaining element...
-    randomIndex = Math.floor(Math.random() * currentIndex);
-    currentIndex -= 1;
+            if ("" == text.trim()) {
+                clearInputText();
+                return;
+            }
+            if (isNaN(text.trim())) {
+                clearInputText();
+                return;
+            }
 
-    // And swap it with the current element.
-    temporaryValue = array[currentIndex];
-    array[currentIndex] = array[randomIndex];
-    array[randomIndex] = temporaryValue;
-  }
-
-  return array;
-}
-
-function ballObject(number, x, y) {
-    this.number = number;
-    this.x = x;
-    this.y = y;
-    this.isWithdrawed = false;
-}
-
+            //else
+            try {
+                allBalls.selectBall(text.trim());
+                clearInputText();
+            }
+            catch (err) {
+                clearInputText();
+                console.error(err);
+            }
 
 
-var myGameArea = {
-    canvas : document.createElement("canvas"),
-    start : function() {
-        this.canvas.width = canvasWidth;
-        this.canvas.height = canvasHeight;
-        this.context = this.canvas.getContext("2d");
-        document.body.insertBefore(this.canvas, document.body.childNodes[0]);
-    }
-}
+        }
 
-function ball(x,y, radius, color, textFont, text) {
-	//console.log(x,y, radius, color);
-    this.x = x;
-    this.y = y; 
-    this.radius = radius;
-    ctx = myGameArea.context;
-    ctx.beginPath();
-    ctx.fillStyle = color;
-    //if (text%7==0){ctx.fillStyle='#97CA30';}
-    //ctx.fillRect(this.x, this.y, this.width, this.height);
-    ctx.arc(x, y, radius, 0, 2*Math.PI);
-	ctx.fill();
-	ctx.stroke();
-
-    ctx.font = textFont;
-    //if (text%7==0){ctx.font='bold '+textFont;}
-    ctx.fillStyle = 'black';
-    ctx.textAlign = 'center';
-    ctx.fillText(text, x, y+radius/2);
-
-}
-
-function clearInputText(){
-    document.getElementById('inputBox').value="";
-}
-
-function parseInput(){
-
-    text=document.getElementById('inputBox').value;
-    console.log("Input: "+text);
-
-    if ( "" == text.trim() ) {
-        clearInputText(); 
-        return ;
-    }
-    if ( isNaN(text.trim()) ) {
-        clearInputText(); 
-        return ;
-    }
-    
-    //else
-    try {
-        allBalls.selectBall(text.trim());    
-        clearInputText();
-    }
-    catch (err) {
-        clearInputText();
-        console.error(err);
-    }
-
-    
-}
-
-</script>
-<br><br><br><br><br><br><br><br>
-<!--Bola número: <input id="inputBox" onkeydown="if(event.keyCode == 13){document.getElementById('clickButton').click()}" type="text" placeholder='Bola Número'></input>
+    </script>
+    <br><br><br><br><br><br><br><br>
+    <!--Bola número: <input id="inputBox" onkeydown="if(event.keyCode == 13){document.getElementById('clickButton').click()}" type="text" placeholder='Bola Número'></input>
 <button id="clickButton" onclick="parseInput()" >Saiu!</button>-->
-<button id="suffleButton" onclick="withdrawRandom()">Aleatório (ou só carregar enter)</button>
-<br><br><br>
-<small><span onclick="timeoutForWithdrawing=20">ps:</span> o botão está protegido. Só 1 número de 2 em 2 segundos.</small>
+    <button id="suffleButton" onclick="withdrawRandom()">Aleatório (ou só carregar enter)</button>
+    <br><br><br>
+    <small><span onclick="timeoutForWithdrawing=20">ps:</span> o botão está protegido. Só 1 número de 2 em 2
+        segundos.</small>
 
-<script type="text/javascript">
-document.addEventListener("keydown", keyDownTextField, false);
+    <script type="text/javascript">
+        document.addEventListener("keydown", keyDownTextField, false);
 
-function keyDownTextField(e) { 
-	if(e.keyCode==13) {
-		withdrawRandom();
-	}
-}
-</script>
+        function keyDownTextField(e) {
+            if (e.keyCode == 13) {
+                withdrawRandom();
+            }
+        }
+    </script>
 </body>
+
 </html>
